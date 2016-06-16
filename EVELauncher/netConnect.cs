@@ -104,6 +104,7 @@ namespace EVELauncher
                 return "netErr";
             }
         }
+
         public string getClientAccessToken(string BearerAccessToken)
         {
             try
@@ -128,6 +129,23 @@ namespace EVELauncher
                 Match clientAccessTokenMatch = Regex.Match(clientAccessResponseHtml, @"access.token.(.*).amp.token.type");
                 string clientAccessToken = clientAccessTokenMatch.Groups[1].Value;
                 return clientAccessToken;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return "netErr";
+            }
+        }
+
+        public string getClientVersion()
+        {
+            try
+            {
+                WebClient WC = new WebClient();
+                string versionString = WC.DownloadString("http://client.eve-online.com.cn/patches/premium_patchinfoSERENITY_inc.txt");
+                Match clientVersionMatch = Regex.Match(versionString, @"BUILD:(\d*),");
+                Match clientUpdateDateMatch = Regex.Match(versionString, @"(\d*.\d*.\d*.\d*)\n");
+                return clientVersionMatch.Groups[1].Value + " " + clientUpdateDateMatch.Groups[1].Value;
             }
             catch (Exception ex)
             {

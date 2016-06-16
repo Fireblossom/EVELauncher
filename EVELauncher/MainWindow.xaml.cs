@@ -41,6 +41,7 @@ namespace EVELauncher
         {
             InitializeComponent();
             updateServerStatus();
+            updateSharedCacheLocation();
             if (!File.Exists(temp + @"\fakeEveLauncher.json"))
             {
                 userSaveFile.path = "";
@@ -113,7 +114,8 @@ namespace EVELauncher
                     {
                         if (String.IsNullOrEmpty(clientAccessToken) == false)
                         {
-                            Process.Start(loginGameExePath, "/noconsole /ssoToken=" + clientAccessToken + " /triPlatform=" + loginRenderMode);
+                            string FinalLaunchP =  "/noconsole /ssoToken=" + clientAccessToken + " /triPlatform=" + loginRenderMode + " " + loginGameExePath.Replace(@"\bin\exefile.exe","") + @"\launcher\appdata\EVE_Online_Launcher-2.2.896256.win32\launcher.exe";
+                            Process.Start(loginGameExePath,FinalLaunchP);
                             if (loginExitAfterLaunch == true)
                             {
                                 userSaveFile.isCloseAfterLaunch = true;
@@ -163,6 +165,14 @@ namespace EVELauncher
             saveUserName.IsChecked = true;
         }
 
+        private void updateSharedCacheLocation()
+        {
+            sharedCacheLocationLabel.Content = "共享缓存位置：";
+            string sharedLocation = (string)Registry.GetValue("HKEY_CURRENT_USER\\Software\\CCP\\EVEONLINE", "CACHEFOLDER", "Err");
+            if (sharedLocation == "Err") sharedLocation = "不存在";
+            sharedCacheLocationLabel.Content += sharedLocation;
+        }
+
         /// <summary>
         /// 异步发送更新请求，委托更新状态控件
         /// </summary>
@@ -172,14 +182,18 @@ namespace EVELauncher
             {
                 try
                 {
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => refreshStatus.Content = "正在刷新，请稍等..."));
-                string XMLString;
-                XMLString = eveConnection.getApiXML("https://api.eve-online.com.cn/server/ServerStatus.xml.aspx");
-                XmlDocument XML = new XmlDocument();
-                XML.LoadXml(XMLString);
-                string JSON = JsonConvert.SerializeXmlNode(XML);
-                JSON = JSON.Replace("@", "");
-                eveServerStatus status = JsonConvert.DeserializeObject<eveServerStatus>(JSON);
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() => refreshStatus.Content = "正在刷新，请稍等..."));
+                    string clientVersion = eveConnection.getClientVersion();
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() => clientVersionLabel.Content = "最新客户端版本："));
+                    if (clientVersion == "netErr") clientVersion = "网络错误...";
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() => clientVersionLabel.Content += clientVersion.Split(' ')[0] + ", 更新日：" + clientVersion.Split(' ')[1]));
+                    string XMLString;
+                    XMLString = eveConnection.getApiXML("https://api.eve-online.com.cn/server/ServerStatus.xml.aspx");
+                    XmlDocument XML = new XmlDocument();
+                    XML.LoadXml(XMLString);
+                    string JSON = JsonConvert.SerializeXmlNode(XML);
+                    JSON = JSON.Replace("@", "");
+                    eveServerStatus status = JsonConvert.DeserializeObject<eveServerStatus>(JSON);
                 if (status.eveApi.result.serverOpen == "True")
                 {
                     Application.Current.Dispatcher.BeginInvoke(new Action(() => serverStatusLabel.Content = "开启"));
