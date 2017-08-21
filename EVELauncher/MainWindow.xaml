@@ -1,44 +1,44 @@
 ﻿<Window x:Class="EVELauncher.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="EVE山寨启动器" Height="446" Width="456" ResizeMode="CanMinimize" Icon="Resources/icon.ico">
+        Title="假的EVE启动器" Height="441" Width="456" ResizeMode="CanMinimize" Icon="Resources/icon.ico">
     <Grid>
-        <Button x:Name="aboutButton" Content="关于" HorizontalAlignment="Left" Margin="10,351,0,0" VerticalAlignment="Top" Width="75" Click="aboutClick"/>
-        <GroupBox Header="服务器状态" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="129" Width="422">
-            <Grid HorizontalAlignment="Left" Height="109" Margin="10,0,-2,-2" VerticalAlignment="Top" Width="402">
+        <GroupBox Header="服务器状态" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="167" Width="422">
+            <Grid HorizontalAlignment="Left" Margin="10,0,-2,-2" Width="402">
                 <Label Content="服务器状态：" HorizontalAlignment="Left" Margin="23,10,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="serverStatusLabel" Content="" HorizontalAlignment="Left" Margin="110,10,0,0" VerticalAlignment="Top" Width="60"/>
-                <Label Content="在线玩家数：" HorizontalAlignment="Left" Margin="23,35,0,0" VerticalAlignment="Top" Width="82"/>
+                <Label Content="在线玩家数：" HorizontalAlignment="Left" Margin="23,37,0,0" VerticalAlignment="Top" Width="82"/>
                 <Label x:Name="playerNumberLabel" Content="" HorizontalAlignment="Left" Margin="110,35,0,0" VerticalAlignment="Top" Width="60"/>
                 <Label Content="上次刷新时间：" HorizontalAlignment="Left" Margin="11,65,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="lastUpdateLabel" Content="" HorizontalAlignment="Left" Margin="110,65,0,0" VerticalAlignment="Top" Width="282"/>
                 <Button x:Name="serverStateRefreshButton" Content="刷新" HorizontalAlignment="Left" Margin="317,10,0,0" VerticalAlignment="Top" Width="75" Click="serverStateRefresh"/>
                 <Label x:Name="refreshStatus" Content="" HorizontalAlignment="Left" Margin="275,34,0,0" VerticalAlignment="Top" Width="117" TextOptions.TextHintingMode="Animated" HorizontalContentAlignment="Right"/>
-            </Grid>
-        </GroupBox>
-        <GroupBox Header="登录" HorizontalAlignment="Left" Margin="10,144,0,0" VerticalAlignment="Top" Height="201" Width="422">
-            <Grid HorizontalAlignment="Left" Height="191" Margin="10,0,-2,-12" VerticalAlignment="Top" Width="402">
-                <TextBox x:Name="userName" HorizontalAlignment="Left" Height="20" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="189" Margin="96,34,0,0"/>
-                <PasswordBox x:Name="userPass" HorizontalAlignment="Left" Margin="96,59,0,0" VerticalAlignment="Top" Width="189" Height="20"/>
-                <Button x:Name="loginClear" Content="清除" HorizontalAlignment="Left" Margin="290,123,0,0" VerticalAlignment="Top" Width="97" Height="20" Click="loginClearClick"/>
-                <Button x:Name="loginButton" Content="启动游戏" HorizontalAlignment="Left" Margin="290,152,0,0" VerticalAlignment="Top" Width="97" Height="20" Click="loginButtonClick" IsEnabled="False"/>
-                <Button x:Name="choosePath" Content="打开" HorizontalAlignment="Left" Margin="290,10,0,0" VerticalAlignment="Top" Width="97" Height="20" Click="choosePathClick"/>
-                <TextBox x:Name="gameExePath" HorizontalAlignment="Left" Height="20" Margin="96,9,0,0" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Top" Width="189" IsReadOnlyCaretVisible="True"/>
-                <Label Content="用户名或邮箱" HorizontalAlignment="Left" Margin="14,30,0,0" VerticalAlignment="Top"/>
-                <Label Content="密码" HorizontalAlignment="Left" Margin="57,55,0,0" VerticalAlignment="Top" Height="24"/>
-                <Label Content="游戏主程序路径" HorizontalAlignment="Left" Margin="2,6,0,0" VerticalAlignment="Top" Width="94" Height="24"/>
-                <CheckBox x:Name="saveUserName" Content="记住" HorizontalAlignment="Left" Margin="290,36,0,0" VerticalAlignment="Top"/>
-                <CheckBox x:Name="savePassword" Content="记住" HorizontalAlignment="Left" Margin="290,61,0,0" VerticalAlignment="Top" Checked="checkSavePass"/>
-                <CheckBox x:Name="exitAfterLaunch" Content="登录后关闭启动器" HorizontalAlignment="Left" Margin="2,94,0,0" VerticalAlignment="Top"/>
-                <Label Content="渲染模式：" HorizontalAlignment="Left" Margin="134,88,0,0" VerticalAlignment="Top"/>
-                <RadioButton x:Name="radioButtonDX9" Content="DX9（兼容模式）" HorizontalAlignment="Left" Margin="209,94,0,0" VerticalAlignment="Top" Width="115" Click="radioButtonDX9Clicked" ToolTip="注：默认为DirectX 11渲染，若显卡不支持DirectX 11，请选择DirectX 9模式。"/>
-                <RadioButton x:Name="radioButtonDX11" Content="DX11" HorizontalAlignment="Left" Margin="337,94,0,0" VerticalAlignment="Top" IsChecked="True" Click="radioButtonDX11Clicked"/>
-                <Button x:Name="launcherLoginButton" Content="登录" HorizontalAlignment="Left" Margin="85,123,0,0" VerticalAlignment="Top" Width="96" Click="launcherLoginClick" Height="20"/>
-                <Button x:Name="launcherLogOutButton" Content="更换账号（注销）" HorizontalAlignment="Left" Margin="189,123,0,0" VerticalAlignment="Top" Width="96" Click="launcherLogOutClick" Height="20"/>
-            </Grid>
-        </GroupBox>
-        <Label x:Name="clientVersionLabel" Content="" HorizontalAlignment="Left" Margin="90,350,0,0" VerticalAlignment="Top" Width="342" VerticalContentAlignment="Center" Height="25"/>
-        <Label x:Name="sharedCacheLocationLabel" Content="" HorizontalAlignment="Left" Margin="90,380,0,0" VerticalAlignment="Top" Width="342"/>
+                <Label x:Name="clientVersionLabel" Content="" HorizontalAlignment="Left" Margin="13,93,0,0" VerticalAlignment="Top" Width="342" VerticalContentAlignment="Center" Height="25"/>
+                <Label x:Name="sharedCacheLocationLabel" Content="" HorizontalAlignment="Left" Margin="23,120,0,0" VerticalAlignment="Top" Width="342"/>
 
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="登录" HorizontalAlignment="Left" Margin="10,182,0,0" VerticalAlignment="Top" Height="217" Width="422">
+            <Grid HorizontalAlignment="Left" Margin="10,0,-2,-12" Width="402">
+                <ComboBox x:Name="userName" HorizontalAlignment="Left" Height="20" Text="" VerticalAlignment="Top" Width="189" Margin="96,53,0,0" IsEditable="True"/>
+                <PasswordBox x:Name="userPass" HorizontalAlignment="Left" Margin="96,78,0,0" VerticalAlignment="Top" Width="189" Height="20"/>
+                <Button x:Name="loginClear" Content="清除" HorizontalAlignment="Left" Margin="290,143,0,0" VerticalAlignment="Top" Width="97" Height="20" Click="loginClearClick"/>
+                <Button x:Name="loginButton" Content="启动游戏" HorizontalAlignment="Left" Margin="290,172,0,0" VerticalAlignment="Top" Width="97" Height="20" Click="loginButtonClick" IsEnabled="False"/>
+                <Button x:Name="choosePath" Content="打开" HorizontalAlignment="Left" Margin="290,29,0,0" VerticalAlignment="Top" Width="97" Height="20" Click="choosePathClick"/>
+                <TextBox x:Name="gameExePath" HorizontalAlignment="Left" Height="20" Margin="96,28,0,0" TextWrapping="Wrap" IsReadOnly="True" VerticalAlignment="Top" Width="189" IsReadOnlyCaretVisible="True"/>
+                <Label Content="用户名" HorizontalAlignment="Left" Margin="50,49,0,0" VerticalAlignment="Top"/>
+                <Label Content="密码" HorizontalAlignment="Left" Margin="61,74,0,0" VerticalAlignment="Top" Height="24"/>
+                <Label Content="游戏主程序路径" HorizontalAlignment="Left" Margin="1,25,0,0" VerticalAlignment="Top" Width="94" Height="24"/>
+                <CheckBox x:Name="savePassword" Content="记住" HorizontalAlignment="Left" Margin="290,80,0,0" VerticalAlignment="Top" />
+                <CheckBox x:Name="exitAfterLaunch" Content="登录后关闭启动器" HorizontalAlignment="Left" Margin="2,114,0,0" VerticalAlignment="Top"/>
+                <Label Content="渲染模式：" HorizontalAlignment="Left" Margin="134,108,0,0" VerticalAlignment="Top"/>
+                <RadioButton x:Name="radioButtonDX9" Content="DX9（兼容模式）" HorizontalAlignment="Left" Margin="209,114,0,0" VerticalAlignment="Top" Width="115" Click="radioButtonDX9Clicked" ToolTip="注：默认为DirectX 11渲染，若显卡不支持DirectX 11，请选择DirectX 9模式。"/>
+                <RadioButton x:Name="radioButtonDX11" Content="DX11" HorizontalAlignment="Left" Margin="337,114,0,0" VerticalAlignment="Top" IsChecked="True" Click="radioButtonDX11Clicked"/>
+                <Button x:Name="launcherLoginButton" Content="登录" HorizontalAlignment="Left" Margin="85,143,0,0" VerticalAlignment="Top" Width="96" Click="launcherLoginClick" Height="20"/>
+                <Button x:Name="launcherLogOutButton" Content="更换账号（注销）" HorizontalAlignment="Left" Margin="189,143,0,0" VerticalAlignment="Top" Width="96" Click="launcherLogOutClick" Height="20"/>
+                <Label Content="启动参数" HorizontalAlignment="Left" Margin="38,0,0,0" VerticalAlignment="Top"/>
+                <TextBox x:Name="launchParameter" HorizontalAlignment="Left" Height="20" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="189" Margin="96,3,0,0"/>
+            </Grid>
+        </GroupBox>
     </Grid>
 </Window>

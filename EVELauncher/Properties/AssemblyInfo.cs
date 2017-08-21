@@ -8,12 +8,12 @@ using System.Windows;
 // 特性集控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("EVELauncher")]
-[assembly: AssemblyDescription("An unofficial CEVE Launcher for Windows. OSS Released under the MIT license.")]
+[assembly: AssemblyDescription("An unofficial CEVE Launcher for Windows.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("iM.Inc")]
+[assembly: AssemblyCompany("DFT.Inc")]
 [assembly: AssemblyProduct("EVELauncher")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
-[assembly: AssemblyTrademark("By imi415")]
+[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyTrademark("By DF")]
 [assembly: AssemblyCulture("")]
 
 // 将 ComVisible 设置为 false 使此程序集中的类型
@@ -51,5 +51,5 @@ using System.Windows;
 // 可以指定所有这些值，也可以使用“生成号”和“修订号”的默认值，
 // 方法是按如下所示使用“*”: 
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.3.0")]
-[assembly: AssemblyFileVersion("0.1.3.0")]
+[assembly: AssemblyVersion("0.0.0.1")]
+[assembly: AssemblyFileVersion("0.0.0.1")]

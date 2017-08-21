@@ -4,26 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Security;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace EVELauncher
 {
@@ -34,50 +19,92 @@ namespace EVELauncher
     {
         string saveFileJson;
         saveFile userSaveFile = new saveFile();
-        string temp = System.IO.Path.GetTempPath();
+        string temp = System.IO.Directory.GetCurrentDirectory();
         bool isLoggedIn = false;
         netConnect eveConnection = new netConnect();
+        List<Account> accounts;
         public MainWindow()
         {
             InitializeComponent();
             updateServerStatus();
             updateSharedCacheLocation();
-            if (!File.Exists(temp + @"\fakeEveLauncher.json"))
+            if (!File.Exists(temp + @"\Settings.json"))
             {
                 userSaveFile.path = "";
-                userSaveFile.userName = "";
-                userSaveFile.userPass = "";
+                userSaveFile.launchPara = "";
                 userSaveFile.isCloseAfterLaunch = false;
                 userSaveFile.isDX9Choosed = false;
-                userSaveFile.Write(temp + @"\fakeEveLauncher.json", JsonConvert.SerializeObject(userSaveFile));
+                userSaveFile.Write(temp + @"\Settings.json", JsonConvert.SerializeObject(userSaveFile));
             }
             else
             {
-                saveFileJson = userSaveFile.Read(temp + @"\fakeEveLauncher.json",Encoding.UTF8);
+                saveFileJson = userSaveFile.Read(temp + @"\Settings.json", Encoding.UTF8);
                 userSaveFile = JsonConvert.DeserializeObject<saveFile>(saveFileJson);
                 try
                 {
                     gameExePath.Text = userSaveFile.path;
-                    userName.Text = userSaveFile.userName;
-                    userPass.Password = userSaveFile.userPass;
+                    launchParameter.Text = userSaveFile.launchPara;
                     useDX9RenderMode(userSaveFile.isDX9Choosed);
                     exitAfterLaunch.IsChecked = userSaveFile.isCloseAfterLaunch;
 
-                    if (!String.IsNullOrEmpty(userSaveFile.userName))
-                    {
-                        saveUserName.IsChecked = true;
-                    }
-                    if (!String.IsNullOrEmpty(userSaveFile.userPass))
-                    {
-                        savePassword.IsChecked = true;
-                    }
+
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message + " 启动器更新导致存档文件需要更新，更新的设置项已应用默认设置。");
                 }
             }
+
+            if (File.Exists("userInfo.xml"))
+            {
+                /*创建文件流对象 参数1:文件的(相对)路径也可以再另一个文件夹下如:User(文件夹)/userInfo 
+                                 参数2:指定操作系统打开文件的方式 
+                                 参数3:指定文件的访问类型(这里为只读)  */
+
+                //为了安全在这里创建了一个userInfo文件(用户信息),也可以命名为其他的文件格式的(可以任意)                       
+                FileStream fs = new FileStream("userInfo.xml", FileMode.Open, FileAccess.Read); //使用第6个构造函数  
+                XmlSerializer xs = new XmlSerializer(typeof(List<Account>));//创建一个序列化和反序列化类的对象 
+                accounts = (List<Account>)xs.Deserialize(fs);//调用反序列化方法，从文件userInfo.xml中读取对象信息  
+
+
+                for (int i = 0; i < accounts.Count; i++)//将集合中的用户登录ID读取到下拉框中  
+                {
+                    if (i == 0 && accounts[i].Password != "")  //如果第一个用户已经记住密码了。  
+                    {
+                        savePassword.IsChecked = true;
+                        userPass.Password = accounts[i].Password;  //给密码框赋值  
+                    }
+                    userName.Items.Add(accounts[i].Username.ToString());
+                }
+                fs.Close();   //关闭文件流  
+                userName.SelectedIndex = 0;   //默认下拉框选中为第一项  
+
+
+            }
+            else
+            {
+                accounts = new List<Account>();
+                saveAllAccount();
+            }
+            userName.DropDownClosed += SelectedIndexChanged;
         }
+
+        private void SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (accounts[userName.SelectedIndex].Password != "") //如果用户的密码不是为空时  
+            {
+                //把用户ID所对应的密码赋给密码框(这时的数据还在用户集合中)  
+                userPass.Password = accounts[userName.SelectedIndex].Password.ToString();
+                savePassword.IsChecked = true;
+            }
+            else
+            {
+                userPass.Password = "";  //如果用户的密码本身就是空，那只能给空值给密码框了。  
+                savePassword.IsChecked = false;
+            }
+        }
+
+
 
         private void loginClearClick(object sender, RoutedEventArgs e)
         {
@@ -88,6 +115,7 @@ namespace EVELauncher
         private async void loginButtonClick(object sender, RoutedEventArgs e)
         {
             string loginGameExePath = gameExePath.Text;
+            string launchPara = launchParameter.Text;
             bool loginExitAfterLaunch = (bool)exitAfterLaunch.IsChecked;
             string loginRenderMode;
             if (radioButtonDX9.IsChecked == false)
@@ -114,12 +142,12 @@ namespace EVELauncher
                     {
                         if (String.IsNullOrEmpty(clientAccessToken) == false)
                         {
-                            string FinalLaunchP =  "/noconsole /ssoToken=" + clientAccessToken + " /triPlatform=" + loginRenderMode + " " + loginGameExePath.Replace(@"\bin\exefile.exe","") + @"\launcher\appdata\EVE_Online_Launcher-2.2.896256.win32\launcher.exe";
+                            string FinalLaunchP =  "/noconsole " + launchPara + " /ssoToken=" + clientAccessToken + " /triPlatform=" + loginRenderMode + " " + loginGameExePath.Replace(@"\bin\exefile.exe","") + @"\launcher\appdata\EVE_Online_Launcher-2.2.896256.win32\launcher.exe";
                             Process.Start(loginGameExePath,FinalLaunchP);
                             if (loginExitAfterLaunch == true)
                             {
                                 userSaveFile.isCloseAfterLaunch = true;
-                                File.WriteAllText(temp + @"\fakeEveLauncher.json", JsonConvert.SerializeObject(userSaveFile));
+                                File.WriteAllText(temp + @"\Settings.json", JsonConvert.SerializeObject(userSaveFile));
                                 Application.Current.Dispatcher.BeginInvoke(new Action(() => this.Close()));
                             }
                             Application.Current.Dispatcher.BeginInvoke(new Action(() => loginButton.IsEnabled = true));
@@ -131,6 +159,7 @@ namespace EVELauncher
                         }
                     }
                 });
+
         }
 
         private void choosePathClick(object sender, RoutedEventArgs e)
@@ -149,20 +178,6 @@ namespace EVELauncher
         private void serverStateRefresh(object sender, RoutedEventArgs e)
         {
             updateServerStatus();
-        }
-
-        private void aboutClick(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("EVE山寨启动器，无广告~ \n协议：MIT License \n作者：@imi415_ \n更新：https://blog.imi.moe/?p=288 \nGitHub主页：https://github.com/imi415/EVELauncher ","关于",MessageBoxButton.OK,MessageBoxImage.Asterisk);
-        }
-
-        private void checkSavePass(object sender, RoutedEventArgs e)
-        {
-            if (MessageBox.Show("警告：密码明文存储，请勿在非本人电脑上勾选此项！用户信息存储在临时文件夹的fakeEveLauncher.json里，请注意删除！！", "安全警告", MessageBoxButton.OKCancel, MessageBoxImage.Warning) == MessageBoxResult.Cancel)
-            {
-                savePassword.IsChecked = false;
-            }
-            saveUserName.IsChecked = true;
         }
 
         private void updateSharedCacheLocation()
@@ -257,18 +272,6 @@ namespace EVELauncher
             string loginUserPassword = userPass.Password;
             if (String.IsNullOrEmpty(userName.Text) == false || String.IsNullOrEmpty(userPass.Password) == false)
             {
-                if (saveUserName.IsChecked == true)
-                {
-                    userSaveFile.userName = userName.Text;
-                    if (savePassword.IsChecked == true)
-                    {
-                        userSaveFile.userPass = userPass.Password;
-                    }
-					else
-					{
-						userSaveFile.userPass = "";
-					}
-                }
                 if (String.IsNullOrEmpty(gameExePath.Text) == false)
                 {
                     userSaveFile.path = gameExePath.Text;
@@ -314,6 +317,38 @@ namespace EVELauncher
                 enableLoginControls(true);
                 launcherLoginButton.Content = "登录";
             }
+
+
+            string loginName = userName.Text.Trim();  //将下拉框的登录名先保存在变量中  
+            for (int i = 0; i < userName.Items.Count; i++)  //遍历下拉框中的所有元素  
+            {
+                if (userName.Items[i].ToString() == loginName)
+                {
+                    userName.Items.RemoveAt(i);  //如果当前登录用户在下拉列表中已经存在，则将其移除  
+                    break;
+                }
+            }
+
+            for (int i = 0; i < accounts.Count; i++)    //遍历用户集合中的所有元素  
+            {
+                if (accounts[i].Username == loginName)  //如果当前登录用户在用户集合中已经存在，则将其移除  
+                {
+                    accounts.RemoveAt(i);
+                    break;
+                }
+            }
+
+            userName.Items.Insert(0, loginName);  //每次都将最后一个登录的用户放插入到第一位  
+            Account user;
+            if (savePassword.IsChecked == true)    //如果用户要求要记住密码  
+            {
+                user = new Account(loginName, userPass.Password);  //将登录ID和密码一起插入到用户集合中  
+            }
+            else
+                user = new Account(loginName, "");  //否则只插入一个用户名到用户集合中，密码设为空  
+            accounts.Insert(0, user);   //在用户集合中插入一个用户  
+            userName.SelectedIndex = 0;   //让下拉框选中集合中的第一个 
+            saveAllAccount();
         }
 
         /// <summary>
@@ -327,7 +362,6 @@ namespace EVELauncher
                 userName.IsEnabled = true;
                 userPass.IsEnabled = true;
                 launcherLoginButton.IsEnabled = true;
-                saveUserName.IsEnabled = true;
                 savePassword.IsEnabled = true;
             }
             else
@@ -335,7 +369,6 @@ namespace EVELauncher
                 userName.IsEnabled = false;
                 userPass.IsEnabled = false;
                 launcherLoginButton.IsEnabled = false;
-                saveUserName.IsEnabled = false;
                 savePassword.IsEnabled = false;
             }
         }
@@ -343,8 +376,6 @@ namespace EVELauncher
         private void launcherLogOutClick(object sender, RoutedEventArgs e)
         {
             eveConnection.LauncherAccessToken = "";
-			userName.Text="";
-			userPass.Password="";
             enableLoginControls(true);
             launcherLoginButton.Content = "登录";
             loginButton.IsEnabled = false;
@@ -354,14 +385,22 @@ namespace EVELauncher
         /// <summary>
         /// 保存全部数据并写入到文件
         /// </summary>
+        
         public void saveAllData()
         {
-            userSaveFile.userName = userName.Text;
-            userSaveFile.userPass = userPass.Password;
+            userSaveFile.launchPara = launchParameter.Text;
             userSaveFile.isCloseAfterLaunch = (bool)exitAfterLaunch.IsChecked;
             userSaveFile.isDX9Choosed = (bool)radioButtonDX9.IsChecked;
             userSaveFile.path = gameExePath.Text;
-            userSaveFile.Write(temp + @"\fakeEveLauncher.json", JsonConvert.SerializeObject(userSaveFile));
+            userSaveFile.Write(temp + @"\Settings.json", JsonConvert.SerializeObject(userSaveFile));
+        }
+        public void saveAllAccount()
+        {
+            XmlSerializer xs = new XmlSerializer(typeof(List<Account>));
+            FileStream fs = new FileStream("userInfo.xml", FileMode.Create, FileAccess.Write);  //创建一个文件流对象  
+            //BinaryFormatter bf = new BinaryFormatter();  //创建一个序列化和反序列化对象  
+            xs.Serialize(fs, accounts);   //要先将Account类先设为可以序列化(即在类的前面加[Serializable])。将用户集合信息写入到硬盘中  
+            fs.Close();   //关闭文件流  
         }
     }
 }
