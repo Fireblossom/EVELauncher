@@ -159,7 +159,11 @@ namespace EVELauncher
                         }
                     }
                 });
-
+            eveConnection.LauncherAccessToken = "";
+            enableLoginControls(true);
+            launcherLoginButton.Content = "登录";
+            loginButton.IsEnabled = false;
+            isLoggedIn = false;
         }
 
         private void choosePathClick(object sender, RoutedEventArgs e)
