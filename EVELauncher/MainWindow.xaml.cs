@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Threading;
 
 namespace EVELauncher
 {
@@ -142,7 +143,8 @@ namespace EVELauncher
                     {
                         if (String.IsNullOrEmpty(clientAccessToken) == false)
                         {
-                            string FinalLaunchP =  "/noconsole " + launchPara + " /ssoToken=" + clientAccessToken + " /triPlatform=" + loginRenderMode + " " + loginGameExePath.Replace(@"\bin\exefile.exe","") + @"\launcher\appdata\EVE_Online_Launcher-2.2.896256.win32\launcher.exe";
+                            //string FinalLaunchP =  "/noconsole " + launchPara + " /ssoToken=" + clientAccessToken + " /triPlatform=" + loginRenderMode + " " + loginGameExePath.Replace(@"\bin\exefile.exe","") + @"\launcher\appdata\EVE_Online_Launcher-2.2.896256.win32\launcher.exe";
+                            string FinalLaunchP = launchPara + " /ssoToken=" + clientAccessToken + " /triPlatform=" + loginRenderMode + " " + loginGameExePath.Replace(@"\bin\exefile.exe", "") + @"\launcher\appdata\EVE_Online_Launcher-2.2.896256.win32\launcher.exe";
                             Process.Start(loginGameExePath,FinalLaunchP);
                             if (loginExitAfterLaunch == true)
                             {
@@ -159,6 +161,7 @@ namespace EVELauncher
                         }
                     }
                 });
+            Thread.Sleep(200);
             eveConnection.LauncherAccessToken = "";
             enableLoginControls(true);
             launcherLoginButton.Content = "登录";
