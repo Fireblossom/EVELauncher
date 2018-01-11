@@ -37,7 +37,7 @@
                 <Button x:Name="launcherLoginButton" Content="登录" HorizontalAlignment="Left" Margin="85,143,0,0" VerticalAlignment="Top" Width="96" Click="launcherLoginClick" Height="20"/>
                 <Button x:Name="launcherLogOutButton" Content="更换账号（注销）" HorizontalAlignment="Left" Margin="189,143,0,0" VerticalAlignment="Top" Width="96" Click="launcherLogOutClick" Height="20"/>
                 <Label Content="启动参数" HorizontalAlignment="Left" Margin="38,0,0,0" VerticalAlignment="Top"/>
-                <TextBox x:Name="launchParameter" HorizontalAlignment="Left" Height="20" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="189" Margin="96,3,0,0"/>
+                <TextBox x:Name="launchParameter" HorizontalAlignment="Left" Height="20" Text="" VerticalAlignment="Top" Width="189" Margin="96,3,0,0"/>
             </Grid>
         </GroupBox>
     </Grid>
