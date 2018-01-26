@@ -2,14 +2,13 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Threading;
+using System.Diagnostics;
 
 namespace EVELauncher
 {
@@ -161,11 +160,15 @@ namespace EVELauncher
                         }
                     }
                 });
-            Thread.Sleep(200);
+            await Application.Current.Dispatcher.BeginInvoke(new Action(() => enableLoginControls(true)));
+            disableLaunchControls();
+        }
+
+        public void disableLaunchControls()
+        {
             eveConnection.LauncherAccessToken = "";
-            enableLoginControls(true);
-            launcherLoginButton.Content = "登录";
-            loginButton.IsEnabled = false;
+            Application.Current.Dispatcher.BeginInvoke(new Action(() => launcherLoginButton.Content = "登录"));
+            Application.Current.Dispatcher.BeginInvoke(new Action(() => loginButton.IsEnabled = false));
             isLoggedIn = false;
         }
 
